@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -30,10 +31,65 @@
 
         <RelativeLayout
             android:id="@+id/layout_institute"
-            android:visibility="gone"
+            android:visibility="visible"
             android:layout_width="match_parent"
-            android:layout_height="300dp"
+            android:layout_height="310dp"
             android:background="#99978050">
+
+            <EditText
+                android:id="@+id/searchInstitute"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginEnd="10dp"
+                android:layout_marginBottom="10dp"
+                android:ems="10"
+                android:hint="Знайти інститут"
+                android:inputType="textPersonName" />
+
+            <ImageButton
+                android:id="@+id/btn_clear_search_institute"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_alignParentEnd="true"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginEnd="10dp"
+                android:layout_marginBottom="10dp"
+                android:background="@android:drawable/ic_menu_close_clear_cancel"
+                android:contentDescription="TODO" />
+
+            <TextView
+                android:id="@+id/title_list_my_institutes"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/searchInstitute"
+                android:layout_marginStart="10dp"
+                android:text="Збережені інститути" />
+
+            <ListView
+                android:id="@+id/listInstitutes"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:layout_below="@id/searchInstitute">
+            </ListView>
+
+            <ListView
+                android:id="@+id/listMyInstitutes"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:layout_below="@+id/title_list_my_institutes">
+            </ListView>
+
+            <pl.droidsonroids.gif.GifImageView
+                android:id="@+id/gif_load"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:visibility="gone"
+                android:src="@drawable/git_load2"/>
         </RelativeLayout>
 
     </LinearLayout>
