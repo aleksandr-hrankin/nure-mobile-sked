@@ -6,6 +6,7 @@ import com.example.sked.domain.Division;
 import com.example.sked.domain.Faculty;
 import com.example.sked.domain.Group;
 import com.example.sked.domain.Institute;
+import com.example.sked.domain.Schedule;
 import com.example.sked.domain.Semester;
 
 import java.util.List;
@@ -36,5 +37,8 @@ public interface InstituteApi {
 
     @GET("/group/{id}")
     public Call<List<Group>> getGroups(@Path("id") String id);
+
+    @GET("/schedule/{id}")
+    public Call<List<Schedule>> getSchedule(@Path("id") String id);
 
 }

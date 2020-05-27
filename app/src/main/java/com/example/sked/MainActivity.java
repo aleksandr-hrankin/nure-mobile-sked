@@ -15,6 +15,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -27,6 +28,7 @@ import com.example.sked.adapter.DivisionAdapter;
 import com.example.sked.adapter.FacultyAdapter;
 import com.example.sked.adapter.GroupAdapter;
 import com.example.sked.adapter.InstituteAdapter;
+import com.example.sked.adapter.MyGroupAdapter;
 import com.example.sked.adapter.SemesterAdapter;
 import com.example.sked.database.Database;
 import com.example.sked.domain.Course;
@@ -35,6 +37,8 @@ import com.example.sked.domain.Division;
 import com.example.sked.domain.Faculty;
 import com.example.sked.domain.Group;
 import com.example.sked.domain.Institute;
+import com.example.sked.domain.MyGroup;
+import com.example.sked.domain.Schedule;
 import com.example.sked.domain.Semester;
 import com.example.sked.service.NetworkService;
 import com.example.sked.service.OnSwipeTouchListener;
@@ -66,6 +70,7 @@ public class MainActivity extends AppCompatActivity {
     private LinearLayout layoutCourses;
     private LinearLayout layoutDepartments;
     private LinearLayout layoutGroups;
+    private LinearLayout layoutMyGroups;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -85,6 +90,7 @@ public class MainActivity extends AppCompatActivity {
         layoutCourses = findViewById(R.id.layout_courses);
         layoutDepartments = findViewById(R.id.layout_departments);
         layoutGroups = findViewById(R.id.layout_groups);
+        layoutMyGroups = findViewById(R.id.layout_my_groups);
 
         onClick();
         onSwipe();
@@ -133,6 +139,9 @@ public class MainActivity extends AppCompatActivity {
                         break;
                     case R.id.btn_clear_search_institute:
                         clearInputSearchInstitute();
+                    case R.id.btn_my_groups:
+                        setVisibility("my-groups");
+                        outputMyGroup();
                 }
             }
         };
@@ -142,6 +151,29 @@ public class MainActivity extends AppCompatActivity {
         ImageButton btnClearSearchInstitute = findViewById(R.id.btn_clear_search_institute);
         btnClearSearchInstitute.setOnClickListener(onClickListener);
 
+        ImageButton btnMyGroups = findViewById(R.id.btn_my_groups);
+        btnMyGroups.setOnClickListener(onClickListener);
+
+    }
+
+    private void outputMyGroup() {
+        final RecyclerView listMyGroups = findViewById(R.id.list_my_groups);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
+        listMyGroups.setLayoutManager(layoutManager);
+
+        final List<MyGroup>myGroups = Database.getInstance(this).getAllGroups();
+
+        final MyGroupAdapter adapter = new MyGroupAdapter(this);
+        adapter.setItems(myGroups);
+        adapter.setClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                int position = listMyGroups.indexOfChild(v);
+                Toast.makeText(getApplicationContext(), myGroups.get(position).toString(), Toast.LENGTH_LONG).show();
+
+            }
+        });
+        listMyGroups.setAdapter(adapter);
     }
 
     public void onSwipe() {
@@ -281,7 +313,6 @@ public class MainActivity extends AppCompatActivity {
     private void outputDivisions(final List<Division> divisions) {
         final RecyclerView listDivisions = findViewById(R.id.list_divisions);
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
-
         listDivisions.setLayoutManager(layoutManager);
 
         final DivisionAdapter adapter = new DivisionAdapter();
@@ -299,7 +330,7 @@ public class MainActivity extends AppCompatActivity {
         listDivisions.setAdapter(adapter);
     }
 
-    private void loadSemesterFromServer(String id) {
+    private void loadSemesterFromServer(final String id) {
         NetworkService.getInstance()
                 .getInstitutionApi()
                 .getSemesters(id)
@@ -494,14 +525,39 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 int position = listSemesters.indexOfChild(v);
-                String departmentId = String.valueOf(groups.get(position).getId());
-//                historyLayout.addLast("departments");
-//                setVisibility("groups");
-//                loadGroupsFromServer(departmentId);
-
+                if (saveGroup(groups.get(position))) {
+                    Toast.makeText(getApplicationContext(), "Група збережена", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(getApplicationContext(), "Група вже збережена", Toast.LENGTH_SHORT).show();
+                }
+//                String groupId = String.valueOf(groups.get(position).getId());
+//                loadScheduleFromServer(groupId);
             }
         });
         listSemesters.setAdapter(adapter);
+    }
+
+    private void loadScheduleFromServer(String id) {
+        NetworkService.getInstance()
+                .getInstitutionApi()
+                .getSchedule(id)
+                .enqueue(new Callback<List<Schedule>>() {
+                    @Override
+                    public void onResponse(Call<List<Schedule>> call, Response<List<Schedule>> response) {
+                        if (response.isSuccessful()) {
+                            List<Schedule> schedules = response.body();
+
+                            for (Schedule schedule : schedules) {
+//                                System.out.println("#" + schedule.getGroup().getDepartment().getCourse().getFaculty().getSemester().getDivision().toString());
+                            }
+                        } else { }
+                    }
+
+                    @Override
+                    public void onFailure(Call<List<Schedule>> call, Throwable t) {
+                        t.printStackTrace();
+                    }
+                });
     }
 
     private boolean saveInstitute(String name) {
@@ -519,6 +575,19 @@ public class MainActivity extends AppCompatActivity {
             }
         }
         return false;
+    }
+
+    private boolean saveGroup(Group group) {
+        List<MyGroup> myGroups = Database.getInstance(this).getAllGroups();
+
+        for (MyGroup myGroup : myGroups) {
+            if (myGroup.getName().equals(group.getName())) {
+                return false;
+            }
+        }
+
+        Database.getInstance(this).addGroup(group);
+        return true;
     }
 
     // show and hide ########################################################################################################################################################################################
@@ -596,6 +665,7 @@ public class MainActivity extends AppCompatActivity {
         layoutCourses.setVisibility(View.GONE);
         layoutDepartments.setVisibility(View.GONE);
         layoutGroups.setVisibility(View.GONE);
+        layoutMyGroups.setVisibility(View.GONE);
 
         switch(name) {
             case "institute":
@@ -618,6 +688,9 @@ public class MainActivity extends AppCompatActivity {
                 break;
             case "groups":
                 layoutGroups.setVisibility(View.VISIBLE);
+                break;
+            case "my-groups":
+                layoutMyGroups.setVisibility(View.VISIBLE);
                 break;
         }
     }

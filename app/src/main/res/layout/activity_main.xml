@@ -27,6 +27,14 @@
                 android:layout_margin="10dp"
                 android:background="@android:drawable/ic_menu_add"
                 android:contentDescription="TODO" />
+
+            <ImageButton
+                android:id="@+id/btn_my_groups"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_margin="10dp"
+                android:layout_alignParentEnd="true"
+                android:background="@drawable/btn_group" />
         </RelativeLayout>
 
         <RelativeLayout
@@ -81,7 +89,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="10dp"
-                    android:text="Збережені інститути" />
+                    android:text="Мої інститути" />
 
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/list_my_institutes"
@@ -104,13 +112,21 @@
             android:layout_width="match_parent"
             android:layout_height="310dp"
             android:orientation="vertical"
+            android:padding="10dp"
             android:visibility="gone">
 
             <TextView
-                android:id="@+id/title_list_division"
+                android:id="@+id/tv_title_division"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="10dp"
+                android:textSize="12sp"
+                android:text="" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:textSize="20sp"
                 android:text="Розклади" />
 
             <androidx.recyclerview.widget.RecyclerView
@@ -126,12 +142,21 @@
             android:layout_width="match_parent"
             android:layout_height="310dp"
             android:orientation="vertical"
+            android:padding="10dp"
             android:visibility="gone">
+
+            <TextView
+                android:id="@+id/tv_title_semester"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="12sp"
+                android:text="" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="10dp"
+                android:layout_gravity="center_horizontal"
+                android:textSize="20sp"
                 android:text="Семестри" />
 
             <androidx.recyclerview.widget.RecyclerView
@@ -147,12 +172,21 @@
             android:layout_width="match_parent"
             android:layout_height="310dp"
             android:orientation="vertical"
+            android:padding="10dp"
             android:visibility="gone">
+
+            <TextView
+                android:id="@+id/tv_title_faculty"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="12sp"
+                android:text="" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="10dp"
+                android:layout_gravity="center_horizontal"
+                android:textSize="20sp"
                 android:text="Факультети" />
 
             <androidx.recyclerview.widget.RecyclerView
@@ -168,12 +202,21 @@
             android:layout_width="match_parent"
             android:layout_height="310dp"
             android:orientation="vertical"
+            android:padding="10dp"
             android:visibility="gone">
+
+            <TextView
+                android:id="@+id/tv_title_course"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="12sp"
+                android:text="" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="10dp"
+                android:layout_gravity="center_horizontal"
+                android:textSize="20sp"
                 android:text="Курси" />
 
             <androidx.recyclerview.widget.RecyclerView
@@ -189,12 +232,21 @@
             android:layout_width="match_parent"
             android:layout_height="310dp"
             android:orientation="vertical"
+            android:padding="10dp"
             android:visibility="gone">
+
+            <TextView
+                android:id="@+id/tv_title_department"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="12sp"
+                android:text="" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="10dp"
+                android:layout_gravity="center_horizontal"
+                android:textSize="20sp"
                 android:text="Кафедри" />
 
             <androidx.recyclerview.widget.RecyclerView
@@ -210,16 +262,48 @@
             android:layout_width="match_parent"
             android:layout_height="310dp"
             android:orientation="vertical"
+            android:padding="10dp"
             android:visibility="gone">
+
+            <TextView
+                android:id="@+id/tv_title_group"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="12sp"
+                android:text="" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="10dp"
+                android:layout_gravity="center_horizontal"
+                android:textSize="20sp"
                 android:text="Групи" />
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/list_groups"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+            </androidx.recyclerview.widget.RecyclerView>
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/layout_my_groups"
+            android:layout_width="match_parent"
+            android:layout_height="310dp"
+            android:orientation="vertical"
+            android:padding="10dp"
+            android:visibility="gone">
+
+            <TextView
+                android:id="@+id/title_list_my_groups"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:text="Мої групи" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/list_my_groups"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 

@@ -20,9 +20,6 @@ public class Semester {
     @SerializedName("division")
     @Expose
     private Division division;
-    @SerializedName("divisionId")
-    @Expose
-    private Long divisionId;
 
     public Semester() {
     }
@@ -67,11 +64,14 @@ public class Semester {
         this.division = division;
     }
 
-    public Long getDivisionId() {
-        return divisionId;
-    }
-
-    public void setDivisionId(Long divisionId) {
-        this.divisionId = divisionId;
+    @Override
+    public String toString() {
+        return "Semester{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", start=" + start +
+                ", finish=" + finish +
+                ", division=" + division +
+                '}';
     }
 }

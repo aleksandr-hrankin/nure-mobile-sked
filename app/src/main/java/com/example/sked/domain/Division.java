@@ -52,4 +52,14 @@ public class Division {
     public void setUser(User user) {
         this.user = user;
     }
+
+    @Override
+    public String toString() {
+        return "Division{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", lastModified=" + lastModified +
+                ", user=" + user +
+                '}';
+    }
 }
