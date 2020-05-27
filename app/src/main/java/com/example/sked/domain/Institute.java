@@ -1,13 +1,35 @@
 package com.example.sked.domain;
 
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
+
 public class Institute {
 
+
+    @SerializedName("id")
+    @Expose
     private Long id;
+    @SerializedName("name")
+    @Expose
     private String name;
+    @SerializedName("description")
+    @Expose
     private String description;
+    @SerializedName("site")
+    @Expose
     private String site;
+    @SerializedName("phone")
+    @Expose
     private String phone;
+    @SerializedName("mail")
+    @Expose
     private String mail;
+    @SerializedName("user")
+    @Expose
+    private User user;
+    @SerializedName("userId")
+    @Expose
+    private Long userId;
 
     public Institute() {
     }
@@ -58,5 +80,21 @@ public class Institute {
 
     public void setMail(String mail) {
         this.mail = mail;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    public Long getUserId() {
+        return userId;
+    }
+
+    public void setUserId(Long userId) {
+        this.userId = userId;
     }
 }
