@@ -7,6 +7,68 @@
     tools:context=".MainActivity">
 
     <LinearLayout
+        android:id="@+id/layout_head"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:background="#80000000"
+        android:orientation="horizontal">
+
+        <ImageButton
+            android:id="@+id/btn_update_schedule"
+            android:layout_width="35dp"
+            android:layout_height="35dp"
+            android:layout_gravity="center_vertical"
+            android:layout_margin="10dp"
+            android:background="@drawable/btn_update"
+            android:contentDescription="TODO" />
+
+        <pl.droidsonroids.gif.GifImageView
+            android:id="@+id/gif_load_schedule"
+            android:layout_width="35dp"
+            android:layout_height="35dp"
+            android:layout_gravity="center_vertical"
+            android:layout_margin="10dp"
+            android:src="@drawable/git_load3"
+            android:visibility="gone" />
+
+        <TextView
+            android:id="@+id/tv_group_name"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="TextView"
+            android:textSize="20sp" />
+
+        <ImageButton
+            android:id="@+id/btn_setting"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_gravity="center"
+            android:layout_margin="10dp"
+            android:background="@drawable/btn_settings"
+            android:contentDescription="TODO" />
+
+    </LinearLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/layout_head"
+        android:layout_above="@+id/layout_footer"
+        android:background="@color/colorAccent">
+
+        <Button
+            android:id="@+id/button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:text="Button" />
+    </RelativeLayout>
+
+    <LinearLayout
         android:id="@+id/layout_footer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -82,6 +144,8 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/searchInstitute"
                 android:orientation="vertical"
+                android:layout_marginTop="20dp"
+                android:padding="10dp"
                 android:visibility="visible">
 
                 <TextView

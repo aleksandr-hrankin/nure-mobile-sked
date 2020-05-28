@@ -41,4 +41,7 @@ public interface InstituteApi {
     @GET("/schedule/{id}")
     public Call<List<Schedule>> getSchedule(@Path("id") String id);
 
+    @GET("/group/get-version/{id}")
+    public Call<Integer> getGroupVersion(@Path("id") String id);
+
 }

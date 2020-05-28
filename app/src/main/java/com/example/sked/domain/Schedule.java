@@ -32,6 +32,9 @@ public class Schedule {
     @SerializedName("note")
     @Expose
     private String note;
+    @SerializedName("groupId")
+    @Expose
+    private Long groupId;
     @SerializedName("group")
     @Expose
     private Group group;
@@ -119,6 +122,14 @@ public class Schedule {
         this.group = group;
     }
 
+    public Long getGroupId() {
+        return groupId;
+    }
+
+    public void setGroupId(Long groupId) {
+        this.groupId = groupId;
+    }
+
     @Override
     public String toString() {
         return "Schedule{" +
@@ -131,6 +142,7 @@ public class Schedule {
                 ", cabinet='" + cabinet + '\'' +
                 ", lessonDate=" + lessonDate +
                 ", note='" + note + '\'' +
+                ", groupId=" + groupId +
                 ", group=" + group +
                 '}';
     }

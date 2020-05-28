@@ -46,7 +46,6 @@ import com.example.sked.service.OnSwipeTouchListener;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Queue;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -56,9 +55,11 @@ public class MainActivity extends AppCompatActivity {
 
     private static long back_pressed;
     private LinkedList<String> historyLayout;
-
     private List<Institute> institutesFromServer;
 
+    final int[] version = new int[1];
+
+    private TextView tvGroupName;
     private EditText inputSearchInstitute;
     private ListView listInstitutes;
     private LinearLayout footer;
@@ -71,6 +72,7 @@ public class MainActivity extends AppCompatActivity {
     private LinearLayout layoutDepartments;
     private LinearLayout layoutGroups;
     private LinearLayout layoutMyGroups;
+    private ImageButton btnUpdateSchedule;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,6 +81,7 @@ public class MainActivity extends AppCompatActivity {
 
         historyLayout = new LinkedList<>();
 
+        tvGroupName = findViewById(R.id.tv_group_name);
         inputSearchInstitute = findViewById(R.id.searchInstitute);
         listInstitutes = findViewById(R.id.listInstitutes);
         footer = findViewById(R.id.layout_footer);
@@ -91,18 +94,22 @@ public class MainActivity extends AppCompatActivity {
         layoutDepartments = findViewById(R.id.layout_departments);
         layoutGroups = findViewById(R.id.layout_groups);
         layoutMyGroups = findViewById(R.id.layout_my_groups);
+        btnUpdateSchedule = findViewById(R.id.btn_update_schedule);
+
 
         onClick();
         onSwipe();
         onTextChanged();
         outputMyInstitutes();
         getInstitutesFromServer();
+        outputGroup();
+        outputSchedule();
 
     }
 
     // get from server ######################################################################################################################################################################################
     private void getInstitutesFromServer() {
-        showGifLoad();
+        showGifLoad(R.id.gif_load);
         NetworkService.getInstance()
                 .getInstitutionApi()
                 .getInstitutes()
@@ -111,9 +118,9 @@ public class MainActivity extends AppCompatActivity {
                     public void onResponse(Call<List<Institute>> call, Response<List<Institute>> response) {
                         if (response.isSuccessful()) {
                             institutesFromServer = response.body();
-                            hideGifLoad();
+                            hideGifLoad(R.id.gif_load);
                         } else {
-                            hideGifLoad();
+                            hideGifLoad(R.id.gif_load);
                             Toast.makeText(MainActivity.this, "Повторіть спробу ще раз.", Toast.LENGTH_LONG).show();
                         }
                     }
@@ -124,6 +131,7 @@ public class MainActivity extends AppCompatActivity {
                     }
                 });
     }
+
     private void clearInputSearchInstitute() {
         inputSearchInstitute.setText("");
     }
@@ -139,9 +147,19 @@ public class MainActivity extends AppCompatActivity {
                         break;
                     case R.id.btn_clear_search_institute:
                         clearInputSearchInstitute();
+                        break;
                     case R.id.btn_my_groups:
-                        setVisibility("my-groups");
-                        outputMyGroup();
+                        outputMyGroups();
+                        break;
+                    case R.id.btn_update_schedule:
+                        MyGroup group = Database.getInstance(getApplicationContext()).getFavoritesGroup();
+                        if (group.getId() != null) {
+                            checkUpdateSchedule();
+                        } else {
+                            Toast.makeText(MainActivity.this, "Не обрана група", Toast.LENGTH_LONG).show();
+                        }
+
+                        break;
                 }
             }
         };
@@ -154,14 +172,18 @@ public class MainActivity extends AppCompatActivity {
         ImageButton btnMyGroups = findViewById(R.id.btn_my_groups);
         btnMyGroups.setOnClickListener(onClickListener);
 
+        btnUpdateSchedule.setOnClickListener(onClickListener);
+
     }
 
-    private void outputMyGroup() {
+    private void outputMyGroups() {
+        historyLayout.addLast("main");
+        setVisibility("my-groups");
         final RecyclerView listMyGroups = findViewById(R.id.list_my_groups);
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         listMyGroups.setLayoutManager(layoutManager);
 
-        final List<MyGroup>myGroups = Database.getInstance(this).getAllGroups();
+        final List<MyGroup> myGroups = Database.getInstance(this).getAllGroups();
 
         final MyGroupAdapter adapter = new MyGroupAdapter(this);
         adapter.setItems(myGroups);
@@ -169,11 +191,83 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 int position = listMyGroups.indexOfChild(v);
-                Toast.makeText(getApplicationContext(), myGroups.get(position).toString(), Toast.LENGTH_LONG).show();
-
+                Database.getInstance(getApplicationContext()).setFavoritesGroup(myGroups.get(position).getId());
+                outputGroup();
             }
         });
         listMyGroups.setAdapter(adapter);
+    }
+
+    private void outputGroup() {
+        MyGroup group = Database.getInstance(getApplicationContext()).getFavoritesGroup();
+        TextView tvGroupName = findViewById(R.id.tv_group_name);
+        tvGroupName.setText(group.getName());
+    }
+
+    private void checkUpdateSchedule() {
+        btnUpdateSchedule.setVisibility(View.GONE);
+        showGifLoad(R.id.gif_load_schedule);
+        final MyGroup group = Database.getInstance(getApplicationContext()).getFavoritesGroup();
+
+        NetworkService.getInstance()
+                .getInstitutionApi()
+                .getGroupVersion(String.valueOf(group.getId()))
+                .enqueue(new Callback<Integer>() {
+                    @Override
+                    public void onResponse(Call<Integer> call, Response<Integer> response) {
+                        if (response.isSuccessful()) {
+                            int version = Integer.parseInt(String.valueOf(response.body()));
+                            if (group.getVersion() < version) {
+                                loadScheduleFromServer(version);
+                            } else {
+                                Toast.makeText(MainActivity.this, "Остання версія розкладу вже встановлена", Toast.LENGTH_LONG).show();
+                                hideGifLoad(R.id.gif_load_schedule);
+                                btnUpdateSchedule.setVisibility(View.VISIBLE);
+                            }
+                        } else { }
+                    }
+
+                    @Override
+                    public void onFailure(Call<Integer> call, Throwable t) {
+                        t.printStackTrace();
+                    }
+                });
+    }
+
+    private void loadScheduleFromServer(final int version) {
+        final MyGroup group = Database.getInstance(getApplicationContext()).getFavoritesGroup();
+                NetworkService.getInstance()
+                .getInstitutionApi()
+                .getSchedule(String.valueOf(group.getId()))
+                .enqueue(new Callback<List<Schedule>>() {
+                    @Override
+                    public void onResponse(Call<List<Schedule>> call, Response<List<Schedule>> response) {
+                        if (response.isSuccessful()) {
+                            List<Schedule> schedules = response.body();
+                            Database.getInstance(getApplicationContext()).clearScheduleByGroupId(group.getId());
+                            Database.getInstance(getApplicationContext()).addListSchedule(schedules);
+                            Database.getInstance(getApplicationContext()).setGroupVersion(group.getId(), version);
+                            Toast.makeText(MainActivity.this, "Розклад обновлено", Toast.LENGTH_LONG).show();
+                            hideGifLoad(R.id.gif_load_schedule);
+                            btnUpdateSchedule.setVisibility(View.VISIBLE);
+                            outputSchedule();
+                        } else { }
+                    }
+
+                    @Override
+                    public void onFailure(Call<List<Schedule>> call, Throwable t) {
+                        t.printStackTrace();
+                    }
+                });
+    }
+
+    private void outputSchedule() {
+        Long id = Database.getInstance(this).getFavoritesGroup().getId();
+        List<Schedule> schedules = Database.getInstance(this).getListScheduleByGroupId(id);
+
+        for (Schedule schedule : schedules) {
+            System.out.println(schedule.toString());
+        }
     }
 
     public void onSwipe() {
@@ -282,10 +376,11 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 int position = listMyInstitutes.indexOfChild(v);
-                String institutionId = String.valueOf(myInstitutesFromDb.get(position).getId());
+                String userId = String.valueOf(myInstitutesFromDb.get(position).getUserId());
                 historyLayout.addLast("institute");
                 setVisibility("divisions");
-                loadDivisionFromServer(institutionId);
+
+                loadDivisionFromServer(userId);
             }
         });
         listMyInstitutes.setAdapter(adapter);
@@ -300,7 +395,8 @@ public class MainActivity extends AppCompatActivity {
                     public void onResponse(Call<List<Division>> call, Response<List<Division>> response) {
                         if (response.isSuccessful()) {
                             outputDivisions(response.body());
-                        } else { }
+                        } else {
+                        }
                     }
 
                     @Override
@@ -339,7 +435,8 @@ public class MainActivity extends AppCompatActivity {
                     public void onResponse(Call<List<Semester>> call, Response<List<Semester>> response) {
                         if (response.isSuccessful()) {
                             outputSemesters(response.body());
-                        } else { }
+                        } else {
+                        }
                     }
 
                     @Override
@@ -380,7 +477,8 @@ public class MainActivity extends AppCompatActivity {
                     public void onResponse(Call<List<Faculty>> call, Response<List<Faculty>> response) {
                         if (response.isSuccessful()) {
                             outputFaculties(response.body());
-                        } else { }
+                        } else {
+                        }
                     }
 
                     @Override
@@ -421,7 +519,8 @@ public class MainActivity extends AppCompatActivity {
                     public void onResponse(Call<List<Course>> call, Response<List<Course>> response) {
                         if (response.isSuccessful()) {
                             outputCourses(response.body());
-                        } else { }
+                        } else {
+                        }
                     }
 
                     @Override
@@ -462,7 +561,8 @@ public class MainActivity extends AppCompatActivity {
                     public void onResponse(Call<List<Department>> call, Response<List<Department>> response) {
                         if (response.isSuccessful()) {
                             outputDepartments(response.body());
-                        } else { }
+                        } else {
+                        }
                     }
 
                     @Override
@@ -503,7 +603,8 @@ public class MainActivity extends AppCompatActivity {
                     public void onResponse(Call<List<Group>> call, Response<List<Group>> response) {
                         if (response.isSuccessful()) {
                             outputGroups(response.body());
-                        } else { }
+                        } else {
+                        }
                     }
 
                     @Override
@@ -514,50 +615,26 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void outputGroups(final List<Group> groups) {
-        final RecyclerView listSemesters = findViewById(R.id.list_groups);
+        final RecyclerView listGroups = findViewById(R.id.list_groups);
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
 
-        listSemesters.setLayoutManager(layoutManager);
+        listGroups.setLayoutManager(layoutManager);
 
         final GroupAdapter adapter = new GroupAdapter();
         adapter.setItems(groups);
         adapter.setClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                int position = listSemesters.indexOfChild(v);
+                int position = listGroups.indexOfChild(v);
                 if (saveGroup(groups.get(position))) {
+                    outputMyGroups();
                     Toast.makeText(getApplicationContext(), "Група збережена", Toast.LENGTH_SHORT).show();
                 } else {
                     Toast.makeText(getApplicationContext(), "Група вже збережена", Toast.LENGTH_SHORT).show();
                 }
-//                String groupId = String.valueOf(groups.get(position).getId());
-//                loadScheduleFromServer(groupId);
             }
         });
-        listSemesters.setAdapter(adapter);
-    }
-
-    private void loadScheduleFromServer(String id) {
-        NetworkService.getInstance()
-                .getInstitutionApi()
-                .getSchedule(id)
-                .enqueue(new Callback<List<Schedule>>() {
-                    @Override
-                    public void onResponse(Call<List<Schedule>> call, Response<List<Schedule>> response) {
-                        if (response.isSuccessful()) {
-                            List<Schedule> schedules = response.body();
-
-                            for (Schedule schedule : schedules) {
-//                                System.out.println("#" + schedule.getGroup().getDepartment().getCourse().getFaculty().getSemester().getDivision().toString());
-                            }
-                        } else { }
-                    }
-
-                    @Override
-                    public void onFailure(Call<List<Schedule>> call, Throwable t) {
-                        t.printStackTrace();
-                    }
-                });
+        listGroups.setAdapter(adapter);
     }
 
     private boolean saveInstitute(String name) {
@@ -592,11 +669,15 @@ public class MainActivity extends AppCompatActivity {
 
     // show and hide ########################################################################################################################################################################################
     private void showLayoutInstitute() {
-        if (layoutInstitute.getVisibility() == View.GONE) {
-            layoutInstitute.setVisibility(View.VISIBLE);
-            final Animation show = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.show_institute);
-            footer.startAnimation(show);
-        }
+        historyLayout.addLast("main");
+        setVisibility("institute");
+
+
+//        if (layoutInstitute.getVisibility() == View.GONE) {
+//            layoutInstitute.setVisibility(View.VISIBLE);
+//            final Animation show = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.show_institute);
+//            footer.startAnimation(show);
+//        }
     }
 
     private void hideLayoutInstitute() {
@@ -623,13 +704,13 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void showGifLoad() {
-        ImageView image = findViewById(R.id.gif_load);
+    private void showGifLoad(int id) {
+        ImageView image = findViewById(id);
         image.setVisibility(View.VISIBLE);
     }
 
-    private void hideGifLoad() {
-        ImageView image = findViewById(R.id.gif_load);
+    private void hideGifLoad(int id) {
+        ImageView image = findViewById(id);
         image.setVisibility(View.GONE);
     }
 
@@ -657,7 +738,7 @@ public class MainActivity extends AppCompatActivity {
         back_pressed = System.currentTimeMillis();
     }
 
-    private void setVisibility(String name) {
+    private void setVisibilityGoneAll() {
         layoutInstitute.setVisibility(View.GONE);
         layoutDivisions.setVisibility(View.GONE);
         layoutSemesters.setVisibility(View.GONE);
@@ -666,8 +747,12 @@ public class MainActivity extends AppCompatActivity {
         layoutDepartments.setVisibility(View.GONE);
         layoutGroups.setVisibility(View.GONE);
         layoutMyGroups.setVisibility(View.GONE);
+    }
 
-        switch(name) {
+    private void setVisibility(String name) {
+        setVisibilityGoneAll();
+
+        switch (name) {
             case "institute":
                 layoutInstitute.setVisibility(View.VISIBLE);
                 break;
@@ -691,6 +776,9 @@ public class MainActivity extends AppCompatActivity {
                 break;
             case "my-groups":
                 layoutMyGroups.setVisibility(View.VISIBLE);
+                break;
+            case "main":
+                setVisibilityGoneAll();
                 break;
         }
     }

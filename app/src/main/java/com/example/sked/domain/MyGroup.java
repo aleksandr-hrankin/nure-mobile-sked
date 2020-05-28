@@ -12,8 +12,11 @@ public class MyGroup {
     private Long semesterFinish;
     private String divisionName;
     private Long lastModified;
+    private int favorites;
+    private Integer version;
 
     public MyGroup() {
+        favorites = 0;
     }
 
     public Long getId() {
@@ -96,6 +99,22 @@ public class MyGroup {
         this.lastModified = lastModified;
     }
 
+    public int getFavorites() {
+        return favorites;
+    }
+
+    public void setFavorites(int favorites) {
+        this.favorites = favorites;
+    }
+
+    public Integer getVersion() {
+        return version;
+    }
+
+    public void setVersion(Integer version) {
+        this.version = version;
+    }
+
     @Override
     public String toString() {
         return "MyGroup{" +
@@ -109,6 +128,8 @@ public class MyGroup {
                 ", semesterFinish=" + semesterFinish +
                 ", divisionName='" + divisionName + '\'' +
                 ", lastModified=" + lastModified +
+                ", favorites=" + favorites +
+                ", versions=" + version +
                 '}';
     }
 }

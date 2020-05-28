@@ -14,6 +14,9 @@ public class Group {
     @SerializedName("department")
     @Expose
     private Department department;
+    @SerializedName("version")
+    @Expose
+    private Long version;
 
     public Group() {
     }
@@ -49,5 +52,13 @@ public class Group {
                 ", name='" + name + '\'' +
                 ", department=" + department +
                 '}';
+    }
+
+    public Long getVersion() {
+        return version;
+    }
+
+    public void setVersion(Long version) {
+        this.version = version;
     }
 }
