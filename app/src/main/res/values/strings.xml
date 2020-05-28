@@ -1,3 +1,9 @@
 <resources>
     <string name="app_name">Sked</string>
+
+    <string name="first_lesson_time">09:00\n10:30</string>
+    <string name="second_lesson_time">10:45\n12:15</string>
+    <string name="third_lesson_time">12:30\n14:00</string>
+    <string name="fourth_lesson_time">14:10\n15:30</string>
+    <string name="fifth_lesson_time">15:45\n17:00</string>
 </resources>

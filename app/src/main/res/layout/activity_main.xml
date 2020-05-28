@@ -11,8 +11,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
-        android:background="#80000000"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:background="@color/colorPrimary">
 
         <ImageButton
             android:id="@+id/btn_update_schedule"
@@ -40,7 +40,8 @@
             android:layout_weight="1"
             android:gravity="center"
             android:text="TextView"
-            android:textSize="20sp" />
+            android:textSize="30sp"
+            android:textColor="@color/allText"/>
 
         <ImageButton
             android:id="@+id/btn_setting"
@@ -54,18 +55,91 @@
     </LinearLayout>
 
     <RelativeLayout
+        android:id="@+id/layout_content"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@+id/layout_head"
-        android:layout_above="@+id/layout_footer"
-        android:background="@color/colorAccent">
 
-        <Button
-            android:id="@+id/button"
+        android:background="@color/all_layout">
+
+        <LinearLayout
+            android:id="@+id/layout_lesson_time"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:text="Button" />
+            android:layout_height="match_parent"
+            android:layout_marginStart="5dp"
+            android:layout_marginEnd="5dp"
+            android:layout_marginTop="40dp"
+            android:layout_marginBottom="185dp"
+            android:orientation="vertical"
+            android:background="@color/all_layout">
+
+            <TextView
+                android:id="@+id/twFirstLessonTime"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:textSize="16sp"
+                android:gravity="center"
+                android:textColor="@color/allText"
+                android:text="@string/first_lesson_time" />
+
+            <TextView
+                android:id="@+id/twSecondLessonTime"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:textSize="16sp"
+                android:gravity="center"
+                android:textColor="@color/allText"
+                android:text="@string/second_lesson_time" />
+
+            <TextView
+                android:id="@+id/twThirdLessonTime"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:textSize="16sp"
+                android:gravity="center"
+                android:textColor="@color/allText"
+                android:text="@string/third_lesson_time" />
+
+            <TextView
+                android:id="@+id/tvFourthLessonTime"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:textSize="16sp"
+                android:gravity="center"
+                android:textColor="@color/allText"
+                android:text="@string/fourth_lesson_time" />
+
+            <TextView
+                android:id="@+id/tvFifthLessonTime"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:textSize="16sp"
+                android:gravity="center"
+                android:textColor="@color/allText"
+                android:text="@string/fifth_lesson_time" />
+        </LinearLayout>
+
+        <HorizontalScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_toEndOf="@+id/layout_lesson_time">
+            <LinearLayout
+                android:id="@+id/layout_schedule"
+                android:orientation="horizontal"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent">
+<!--                -->
+<!--                <include layout="@layout/layout_day"></include>-->
+<!--                <include layout="@layout/layout_day"></include>-->
+<!--                <include layout="@layout/layout_day"></include>-->
+<!--                <include layout="@layout/layout_day"></include>-->
+            </LinearLayout>
+        </HorizontalScrollView>
     </RelativeLayout>
 
     <LinearLayout
@@ -74,7 +148,8 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:orientation="vertical"
-        tools:ignore="UselessParent">
+        tools:ignore="UselessParent"
+        android:background="@color/colorPrimary">
 
         <RelativeLayout
             android:id="@+id/layout_footer_set"
@@ -86,8 +161,11 @@
                 android:id="@+id/btn_add_institute"
                 android:layout_width="50dp"
                 android:layout_height="50dp"
-                android:layout_margin="10dp"
-                android:background="@android:drawable/ic_menu_add"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginEnd="10dp"
+                android:layout_marginBottom="10dp"
+                android:background="@drawable/btn_add"
                 android:contentDescription="TODO" />
 
             <ImageButton

@@ -1,9 +1,11 @@
 package com.example.sked;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.KeyEvent;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
@@ -43,7 +45,12 @@ import com.example.sked.domain.Semester;
 import com.example.sked.service.NetworkService;
 import com.example.sked.service.OnSwipeTouchListener;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Collections;
+import java.util.GregorianCalendar;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -56,6 +63,7 @@ public class MainActivity extends AppCompatActivity {
     private static long back_pressed;
     private LinkedList<String> historyLayout;
     private List<Institute> institutesFromServer;
+    private List<Schedule> schedules;
 
     final int[] version = new int[1];
 
@@ -102,7 +110,7 @@ public class MainActivity extends AppCompatActivity {
         onTextChanged();
         outputMyInstitutes();
         getInstitutesFromServer();
-        outputGroup();
+        outputMyGroup();
         outputSchedule();
 
     }
@@ -158,7 +166,6 @@ public class MainActivity extends AppCompatActivity {
                         } else {
                             Toast.makeText(MainActivity.this, "Не обрана група", Toast.LENGTH_LONG).show();
                         }
-
                         break;
                 }
             }
@@ -192,13 +199,14 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 int position = listMyGroups.indexOfChild(v);
                 Database.getInstance(getApplicationContext()).setFavoritesGroup(myGroups.get(position).getId());
-                outputGroup();
+                checkUpdateSchedule();
+                outputMyGroup();
             }
         });
         listMyGroups.setAdapter(adapter);
     }
 
-    private void outputGroup() {
+    private void outputMyGroup() {
         MyGroup group = Database.getInstance(getApplicationContext()).getFavoritesGroup();
         TextView tvGroupName = findViewById(R.id.tv_group_name);
         tvGroupName.setText(group.getName());
@@ -220,11 +228,12 @@ public class MainActivity extends AppCompatActivity {
                             if (group.getVersion() < version) {
                                 loadScheduleFromServer(version);
                             } else {
-                                Toast.makeText(MainActivity.this, "Остання версія розкладу вже встановлена", Toast.LENGTH_LONG).show();
+                                Toast.makeText(MainActivity.this, "Встановлена остання версія розкладу", Toast.LENGTH_LONG).show();
                                 hideGifLoad(R.id.gif_load_schedule);
                                 btnUpdateSchedule.setVisibility(View.VISIBLE);
                             }
-                        } else { }
+                        } else {
+                        }
                     }
 
                     @Override
@@ -236,7 +245,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void loadScheduleFromServer(final int version) {
         final MyGroup group = Database.getInstance(getApplicationContext()).getFavoritesGroup();
-                NetworkService.getInstance()
+        NetworkService.getInstance()
                 .getInstitutionApi()
                 .getSchedule(String.valueOf(group.getId()))
                 .enqueue(new Callback<List<Schedule>>() {
@@ -251,7 +260,8 @@ public class MainActivity extends AppCompatActivity {
                             hideGifLoad(R.id.gif_load_schedule);
                             btnUpdateSchedule.setVisibility(View.VISIBLE);
                             outputSchedule();
-                        } else { }
+                        } else {
+                        }
                     }
 
                     @Override
@@ -261,13 +271,105 @@ public class MainActivity extends AppCompatActivity {
                 });
     }
 
-    private void outputSchedule() {
-        Long id = Database.getInstance(this).getFavoritesGroup().getId();
-        List<Schedule> schedules = Database.getInstance(this).getListScheduleByGroupId(id);
+    private boolean outputSchedule() {
+        if (Database.getInstance(this).getFavoritesGroup().getId() == null) {
+            return false;
+        }
+
+        LinearLayout layoutSchedule = findViewById(R.id.layout_schedule);
+        layoutSchedule.removeAllViews();
+
+        MyGroup group = Database.getInstance(this).getFavoritesGroup();
+        schedules = Database.getInstance(this).getListScheduleByGroupId(group.getId());
+
+        Long semesterStart = group.getSemesterStart();
+        Long semesterFinish = group.getSemesterFinish();
+
+        Calendar calendarStart = new GregorianCalendar();
+        calendarStart.setTimeInMillis(semesterStart);
+
+        Calendar calendarFinish = new GregorianCalendar();
+        calendarFinish.setTimeInMillis(semesterFinish);
+
+        for (int year = calendarStart.get(Calendar.YEAR); year <= calendarFinish.get(Calendar.YEAR); year++) {
+            for (int month = calendarStart.get(Calendar.MONTH); month <= calendarFinish.get(Calendar.MONTH); month++) {
+                Calendar calendar = new GregorianCalendar(year, month, 1);
+                for (int day = calendarStart.get(Calendar.DAY_OF_MONTH); day <= calendar.getActualMaximum(Calendar.DAY_OF_MONTH); day++) {
+                    String date = ((month + 1) <= 9 ? "0" + (month + 1) : (month + 1)) + "." + (day <= 9 ? "0" + day : day);
+
+                    LayoutInflater inflater = getLayoutInflater();
+                    LinearLayout layoutDay = (LinearLayout) inflater.inflate(R.layout.layout_day, layoutSchedule, false);
+
+                    TextView tvDayDate = layoutDay.findViewById(R.id.tv_day_date);
+                    tvDayDate.setText(date);
+
+                    layoutDay.removeAllViews();
+
+                    layoutDay.addView(tvDayDate);
+
+                    List<Schedule> formatSchedule = getSchedulesByDate(new GregorianCalendar(year, month, day));
+                    Collections.sort(formatSchedule);
+
+                    for (int i = 1; i <= 5; i++) {
+                        int existence = 0;
+                        for (Schedule schedule : formatSchedule) {
+                            if (schedule.getLessonNumber() == i) {
+                                existence = i;
+                                break;
+                            } else {
+                                existence = 0;
+                            }
+                        }
+
+                        if (existence != 0) {
+                            for (Schedule schedule : formatSchedule) {
+                                if (schedule.getLessonNumber() == existence) {
+                                    LinearLayout layoutLesson = (LinearLayout) inflater.inflate(R.layout.layout_lesson, layoutDay, false);
+
+                                    TextView tvLessonName = layoutLesson.findViewById(R.id.tv_lesson_name);
+                                    TextView tvLessonType = layoutLesson.findViewById(R.id.tv_lesson_type);
+                                    TextView tvCabinet = layoutLesson.findViewById(R.id.tv_cabinet);
+
+                                    tvLessonName.setText(schedule.getLessonName());
+                                    tvLessonType.setText(schedule.getLessonType());
+                                    tvCabinet.setText(schedule.getCabinet());
+
+                                    layoutLesson.removeAllViews();
+
+                                    layoutLesson.addView(tvLessonName);
+                                    layoutLesson.addView(tvLessonType);
+                                    layoutLesson.addView(tvCabinet);
+                                    layoutDay.addView(layoutLesson);
+                                }
+                            }
+
+                        } else {
+                            LinearLayout layoutLesson = (LinearLayout) inflater.inflate(R.layout.layout_empty_lesson, layoutDay, false);
+                            layoutDay.addView(layoutLesson);
+                        }
+
+                    }
+                    layoutSchedule.addView(layoutDay);
+                }
+            }
+        }
+        return true;
+    }
+
+    private List<Schedule> getSchedulesByDate(Calendar date) {
+        List<Schedule> resultSchedule = new ArrayList<>();
+        @SuppressLint("SimpleDateFormat") DateFormat format = new SimpleDateFormat("dd.MM.yyyy");
+        String dateFormat = format.format(date.getTime());
+        Calendar lessonDate = new GregorianCalendar();
 
         for (Schedule schedule : schedules) {
-            System.out.println(schedule.toString());
+            lessonDate.setTimeInMillis(schedule.getLessonDate());
+            String lessonDateFormat = format.format(lessonDate.getTime());
+            if (lessonDateFormat.equals(dateFormat)) {
+                resultSchedule.add(schedule);
+            }
         }
+        return resultSchedule;
     }
 
     public void onSwipe() {
@@ -663,6 +765,7 @@ public class MainActivity extends AppCompatActivity {
             }
         }
 
+        group.setVersion(group.getVersion() - 1);
         Database.getInstance(this).addGroup(group);
         return true;
     }

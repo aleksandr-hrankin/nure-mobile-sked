@@ -3,7 +3,7 @@ package com.example.sked.domain;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class Schedule {
+public class Schedule implements Comparable<Schedule> {
 
     @SerializedName("id")
     @Expose
@@ -145,5 +145,11 @@ public class Schedule {
                 ", groupId=" + groupId +
                 ", group=" + group +
                 '}';
+    }
+
+    @Override
+    public int compareTo(Schedule o) {
+        int compareLessonNumber = ((Schedule) o).getLessonNumber();
+        return this.lessonNumber - compareLessonNumber;
     }
 }

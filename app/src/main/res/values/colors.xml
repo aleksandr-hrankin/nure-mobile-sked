@@ -3,4 +3,17 @@
     <color name="colorPrimary">#6200EE</color>
     <color name="colorPrimaryDark">#3700B3</color>
     <color name="colorAccent">#03DAC5</color>
+
+    <!--    lessons-->
+    <color name="lecture">#ffc34d</color>
+    <color name="practice">#df80ff</color>
+    <color name="group_lesson">#99ff99</color>
+    <color name="seminar">@android:color/holo_blue_light</color>
+    <color name="default_lesson_color">#ffffe6</color>
+
+    <!--    text-->
+    <color name="allText">#ffffff</color>
+
+    <!--    layout-->
+    <color name="all_layout">#000000</color>
 </resources>
