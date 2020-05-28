@@ -6,6 +6,7 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
@@ -81,6 +82,7 @@ public class MainActivity extends AppCompatActivity {
     private LinearLayout layoutGroups;
     private LinearLayout layoutMyGroups;
     private ImageButton btnUpdateSchedule;
+    RelativeLayout layoutLessonInfo;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -103,10 +105,12 @@ public class MainActivity extends AppCompatActivity {
         layoutGroups = findViewById(R.id.layout_groups);
         layoutMyGroups = findViewById(R.id.layout_my_groups);
         btnUpdateSchedule = findViewById(R.id.btn_update_schedule);
+        layoutLessonInfo = findViewById(R.id.layout_lesson_info);
 
 
         onClick();
-        onSwipe();
+        onSwipeFooter();
+        onSwipeLessonInfo();
         onTextChanged();
         outputMyInstitutes();
         getInstitutesFromServer();
@@ -183,6 +187,65 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    public void onSwipeFooter() {
+        View footer = findViewById(R.id.layout_footer);
+        footer.setOnTouchListener(new OnSwipeTouchListener(MainActivity.this) {
+            @Override
+            public void onSwipeUp() {
+                super.onSwipeUp();
+                if (historyLayout.size() == 0) {
+                    historyLayout.addLast("main");
+                    setVisibility("institute");
+                }
+//                showLayoutInstitute();
+            }
+
+            @Override
+            public void onSwipeDown() {
+                super.onSwipeUp();
+                if (historyLayout.size() > 0) {
+                    historyLayout.clear();
+                    setVisibility("main");
+                }
+//                hideLayoutInstitute();
+            }
+        });
+    }
+
+    public void onSwipeLessonInfo() {
+        layoutLessonInfo.setOnTouchListener(new OnSwipeTouchListener(MainActivity.this) {
+            @Override
+            public void onSwipeDown() {
+                super.onSwipeUp();
+                    historyLayout.clear();
+                    setVisibility("main");
+
+            }
+        });
+    }
+
+    // watch ################################################################################################################################################################################################
+    public void onTextChanged() {
+        inputSearchInstitute.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void afterTextChanged(Editable s) {
+                // TODO Auto-generated method stub
+            }
+
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                // TODO Auto-generated method stub
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                String instituteName = inputSearchInstitute.getText().toString().toUpperCase();
+                fillInstitutes(instituteName);
+            }
+        });
+    }
+
+
     private void outputMyGroups() {
         historyLayout.addLast("main");
         setVisibility("my-groups");
@@ -201,6 +264,7 @@ public class MainActivity extends AppCompatActivity {
                 Database.getInstance(getApplicationContext()).setFavoritesGroup(myGroups.get(position).getId());
                 checkUpdateSchedule();
                 outputMyGroup();
+                outputSchedule();
             }
         });
         listMyGroups.setAdapter(adapter);
@@ -322,7 +386,7 @@ public class MainActivity extends AppCompatActivity {
                         }
 
                         if (existence != 0) {
-                            for (Schedule schedule : formatSchedule) {
+                            for (final Schedule schedule : formatSchedule) {
                                 if (schedule.getLessonNumber() == existence) {
                                     LinearLayout layoutLesson = (LinearLayout) inflater.inflate(R.layout.layout_lesson, layoutDay, false);
 
@@ -339,6 +403,14 @@ public class MainActivity extends AppCompatActivity {
                                     layoutLesson.addView(tvLessonName);
                                     layoutLesson.addView(tvLessonType);
                                     layoutLesson.addView(tvCabinet);
+
+                                    layoutLesson.setOnClickListener(new View.OnClickListener() {
+                                        @Override
+                                        public void onClick(View v) {
+                                            showLayoutLessonInfo(schedule);
+                                        }
+                                    });
+
                                     layoutDay.addView(layoutLesson);
                                 }
                             }
@@ -356,6 +428,29 @@ public class MainActivity extends AppCompatActivity {
         return true;
     }
 
+    private void showLayoutLessonInfo(Schedule schedule) {
+        historyLayout.addLast("main");
+        setVisibility("lesson_info");
+
+        TextView tvLessonName = findViewById(R.id.tv_info_lessonName);
+        TextView tvLessonType = findViewById(R.id.tv_info_lessonType);
+        TextView tvTeacherSurname = findViewById(R.id.tv_info_teacherSurname);
+        TextView tvCabinet = findViewById(R.id.tv_info_cabinet);
+        TextView tvNote = findViewById(R.id.tv_info_note);
+        TextView tvDate = findViewById(R.id.tv_info_lessonDate);
+
+        tvLessonName.setText(schedule.getLessonName());
+        tvLessonType.setText(schedule.getLessonType());
+        tvTeacherSurname.setText(schedule.getTeacherSurname());
+        tvCabinet.setText(schedule.getCabinet());
+        tvNote.setText(schedule.getNote());
+
+        @SuppressLint("SimpleDateFormat") DateFormat format = new SimpleDateFormat("dd.MM.yyyy");
+        Calendar date = new GregorianCalendar();
+        date.setTimeInMillis(schedule.getLessonDate());
+        tvDate.setText(format.format(date.getTime()));
+    }
+
     private List<Schedule> getSchedulesByDate(Calendar date) {
         List<Schedule> resultSchedule = new ArrayList<>();
         @SuppressLint("SimpleDateFormat") DateFormat format = new SimpleDateFormat("dd.MM.yyyy");
@@ -370,44 +465,6 @@ public class MainActivity extends AppCompatActivity {
             }
         }
         return resultSchedule;
-    }
-
-    public void onSwipe() {
-        View footer = findViewById(R.id.layout_footer);
-        footer.setOnTouchListener(new OnSwipeTouchListener(MainActivity.this) {
-            @Override
-            public void onSwipeUp() {
-                super.onSwipeUp();
-                showLayoutInstitute();
-            }
-
-            @Override
-            public void onSwipeDown() {
-                super.onSwipeUp();
-                hideLayoutInstitute();
-            }
-        });
-    }
-
-    // watch ################################################################################################################################################################################################
-    public void onTextChanged() {
-        inputSearchInstitute.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void afterTextChanged(Editable s) {
-                // TODO Auto-generated method stub
-            }
-
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-                // TODO Auto-generated method stub
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                String instituteName = inputSearchInstitute.getText().toString().toUpperCase();
-                fillInstitutes(instituteName);
-            }
-        });
     }
 
     private void fillInstitutes(String instituteNameEntered) {
@@ -850,6 +907,7 @@ public class MainActivity extends AppCompatActivity {
         layoutDepartments.setVisibility(View.GONE);
         layoutGroups.setVisibility(View.GONE);
         layoutMyGroups.setVisibility(View.GONE);
+        layoutLessonInfo.setVisibility(View.GONE);
     }
 
     private void setVisibility(String name) {
@@ -879,6 +937,9 @@ public class MainActivity extends AppCompatActivity {
                 break;
             case "my-groups":
                 layoutMyGroups.setVisibility(View.VISIBLE);
+                break;
+            case "lesson_info":
+                layoutLessonInfo.setVisibility(View.VISIBLE);
                 break;
             case "main":
                 setVisibilityGoneAll();

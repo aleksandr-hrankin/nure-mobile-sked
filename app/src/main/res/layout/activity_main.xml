@@ -454,4 +454,138 @@
 
     </LinearLayout>
 
+    <RelativeLayout
+        android:id="@+id/layout_lesson_info"
+        android:layout_width="match_parent"
+        android:layout_height="170dp"
+        android:layout_alignParentBottom="true"
+        android:visibility="visible">
+
+        <pl.droidsonroids.gif.GifImageView
+            android:id="@+id/gif_lesson"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center_vertical"
+            android:src="@drawable/gif_lesson3"
+            android:visibility="visible" />
+
+        <TextView
+            android:id="@+id/tv_info_lessonName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/allText"
+            android:textSize="25sp"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="4dp"
+            android:text="TextView" />
+
+        <LinearLayout
+            android:id="@+id/layout_info_teacher"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/tv_info_lessonName"
+            android:layout_marginStart="15dp"
+            android:layout_marginEnd="20dp"
+            android:orientation="vertical">
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/icon_teacher"
+                android:layout_width="85dp"
+                android:layout_height="85dp"
+                android:src="@drawable/ic_teacher"
+                android:layout_gravity="center"
+                app:civ_border_color="#FF000000"
+                app:civ_border_width="2dp" />
+            <TextView
+                android:id="@+id/tv_info_teacherSurname"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/allText"
+                android:textSize="20sp"
+                android:gravity="center"
+                android:layout_gravity="center"
+                android:text="TextView" />
+        </LinearLayout>
+
+        <TextView
+        android:id="@+id/tv_type"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/allText"
+        android:textSize="18sp"
+        android:layout_below="@+id/tv_info_lessonName"
+        android:layout_toEndOf="@id/layout_info_teacher"
+        android:layout_marginTop="10dp"
+        android:text="Тип:" />
+
+        <TextView
+            android:id="@+id/tv_info_lessonType"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/allText"
+            android:textSize="18sp"
+            android:layout_below="@+id/tv_info_lessonName"
+            android:layout_alignParentEnd="true"
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="10dp"
+            android:text="TextView" />
+
+        <TextView
+            android:id="@+id/tv_cabinet"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/allText"
+            android:textSize="18sp"
+            android:layout_below="@+id/tv_type"
+            android:layout_toEndOf="@id/layout_info_teacher"
+            android:layout_marginTop="10dp"
+            android:text="Аудиторія:" />
+
+        <TextView
+            android:id="@+id/tv_info_cabinet"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/allText"
+            android:textSize="18sp"
+            android:layout_below="@+id/tv_info_lessonType"
+            android:layout_alignParentEnd="true"
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="10dp"
+            android:text="TextView" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/allText"
+            android:textSize="18sp"
+            android:layout_below="@+id/tv_cabinet"
+            android:layout_toEndOf="@id/layout_info_teacher"
+            android:layout_marginTop="10dp"
+            android:text="Прекметка:" />
+
+        <TextView
+            android:id="@+id/tv_info_note"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/allText"
+            android:textSize="18sp"
+            android:layout_below="@+id/tv_info_cabinet"
+            android:layout_alignParentEnd="true"
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="10dp"
+            android:text="TextView" />
+
+        <TextView
+            android:id="@+id/tv_info_lessonDate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/allText"
+            android:textSize="14sp"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentEnd="true"
+            android:layout_marginEnd="10dp"
+            android:layout_marginBottom="5dp"
+            android:text="12.09.2020" />
+    </RelativeLayout>
+
 </RelativeLayout>

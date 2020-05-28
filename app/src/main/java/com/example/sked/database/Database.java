@@ -21,7 +21,7 @@ public class Database extends SQLiteOpenHelper {
     public static Database instance;
 
     private static String DATABASE_NAME = "db_sked";
-    private static int DATABASE_VERSION = 12;
+    private static int DATABASE_VERSION = 13;
 
     private Database(@Nullable Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -318,6 +318,7 @@ public class Database extends SQLiteOpenHelper {
                 content.put(KEY_ID_S, schedule.getId());
                 content.put(LESSON_NUMBER_S, schedule.getLessonNumber());
                 content.put(LESSON_NAME_S, schedule.getLessonName());
+                content.put(LESSON_TYPE_S, schedule.getLessonType());
                 content.put(TEACHER_SURNAME_S, schedule.getTeacherSurname());
                 content.put(BUILDING_S, schedule.getBuilding());
                 content.put(CABINET_S, schedule.getCabinet());
