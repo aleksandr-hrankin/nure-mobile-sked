@@ -34,7 +34,7 @@
         android:layout_marginTop="50dp"
         android:layout_marginStart="20dp"
         android:layout_below="@id/layout_head_settings"
-        android:text=" Sked 1.0.0 (beta) \n Asieieva Sofia, 2020. \n All rights reserved." />
+        android:text=" Sked 1.0.0 (beta) \n Asieieva Sofiya, 2020. \n All rights reserved." />
 
     <TextView
         android:id="@+id/textView3"
@@ -72,7 +72,5 @@
             android:layout_alignParentEnd="true"
             android:background="@drawable/btn_back" />
     </RelativeLayout>
-
-
 
 </RelativeLayout>

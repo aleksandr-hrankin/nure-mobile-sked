@@ -184,8 +184,8 @@
             android:id="@+id/layout_institute"
             android:layout_width="match_parent"
             android:layout_height="310dp"
-            android:background="#99978050"
-            android:visibility="gone">
+            android:visibility="gone"
+            android:background="@drawable/background_my_institutes">
 
 
             <LinearLayout
@@ -203,7 +203,8 @@
                     android:layout_marginTop="10dp"
                     android:layout_marginBottom="10dp"
                     android:visibility="visible"
-                    android:text="Знайти інститут" />
+                    android:text="Знайти інститут"
+                    android:background="@drawable/shape_button_search_institute"/>
 
                 <LinearLayout
                     android:id="@+id/layout_search_institute"
@@ -456,7 +457,8 @@
             android:layout_height="310dp"
             android:orientation="vertical"
             android:padding="10dp"
-            android:visibility="gone">
+            android:visibility="gone"
+            android:background="@drawable/background_my_groups">
 
             <TextView
                 android:id="@+id/title_list_my_groups"

@@ -301,6 +301,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void outputMyGroups() {
+        //sorry
         showAnimForFooter();
         btnAddInstitute.setBackgroundResource(R.drawable.btn_hide_footer);
         historyLayout.clear();
