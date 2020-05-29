@@ -21,7 +21,7 @@ public class Database extends SQLiteOpenHelper {
     public static Database instance;
 
     private static String DATABASE_NAME = "db_sked";
-    private static int DATABASE_VERSION = 13;
+    private static int DATABASE_VERSION = 14;
 
     private Database(@Nullable Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -191,6 +191,8 @@ public class Database extends SQLiteOpenHelper {
     }
 
     public void deleteGroupById(String id) {
+        clearScheduleByGroupId(Long.parseLong(id));
+
         SQLiteDatabase db = this.getWritableDatabase();
         db.delete(TABLE_MY_GROUPS, KEY_ID_G + "= ?", new String[]{id});
         db.close();

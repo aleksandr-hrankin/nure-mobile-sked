@@ -2,10 +2,12 @@ package com.example.sked;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.drawable.GradientDrawable;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
+import android.os.Handler;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.KeyEvent;
@@ -80,6 +82,7 @@ public class MainActivity extends AppCompatActivity {
     private ImageButton btnUpdateSchedule;
     private ImageButton btnAddInstitute;
     private Button btnGetInstitutesFromSever;
+    private ImageButton btnSetting;
     //layout
     private RelativeLayout layoutInstitute;
     private LinearLayout layout_footer;
@@ -113,6 +116,7 @@ public class MainActivity extends AppCompatActivity {
         btnUpdateSchedule = findViewById(R.id.btn_update_schedule);
         btnAddInstitute = findViewById(R.id.btn_add_institute);
         btnGetInstitutesFromSever = findViewById(R.id.btn_get_institute_from_server);
+        btnSetting = findViewById(R.id.btn_setting);
         //layout
         layout_footer = findViewById(R.id.layout_footer);
         layoutInstitute = findViewById(R.id.layout_institute);
@@ -133,13 +137,9 @@ public class MainActivity extends AppCompatActivity {
         onSwipeFooter();
         onSwipeLessonInfo();
         onSearchInstituteChanged();
-
-//        getInstitutesFromServer();
-
         outputMyInstitutes();
         outputTitleGroupName();
         outputSchedule();
-
     }
 
     // get from server ######################################################################################################################################################################################
@@ -148,9 +148,7 @@ public class MainActivity extends AppCompatActivity {
             Toast.makeText(MainActivity.this, "Увімкніть інтернет", Toast.LENGTH_LONG).show();
             return;
         }
-
-        btnUpdateSchedule.setVisibility(View.GONE);
-        showGifLoad(R.id.gif_load_schedule);
+        showGifLoad();
 
         NetworkService.getInstance()
                 .getInstitutionApi()
@@ -161,7 +159,7 @@ public class MainActivity extends AppCompatActivity {
                         if (response.isSuccessful()) {
                             institutesFromServer = response.body();
 
-                            hideGifLoad(R.id.gif_load_schedule);
+                            hideGifLoad();
                             btnUpdateSchedule.setVisibility(View.VISIBLE);
                             btnGetInstitutesFromSever.setVisibility(View.GONE);
                             layoutSearchInstitute.setVisibility(View.VISIBLE);
@@ -202,6 +200,10 @@ public class MainActivity extends AppCompatActivity {
                     case R.id.btn_update_schedule:
                         updateSchedule();
                         break;
+                    case R.id.btn_setting:
+                        Intent i = new Intent(MainActivity.this, ActivitySettings.class);
+                        startActivity(i);
+                        break;
                 }
             }
         };
@@ -209,6 +211,7 @@ public class MainActivity extends AppCompatActivity {
         btnAddInstitute.setOnClickListener(onClickListener);
         btnGetInstitutesFromSever.setOnClickListener(onClickListener);
         btnUpdateSchedule.setOnClickListener(onClickListener);
+        btnSetting.setOnClickListener(onClickListener);
 
         ImageButton btnClearSearchInstitute = findViewById(R.id.btn_clear_search_institute);
         btnClearSearchInstitute.setOnClickListener(onClickListener);
@@ -242,9 +245,8 @@ public class MainActivity extends AppCompatActivity {
                 super.onSwipeUp();
                 if (historyLayout.size() == 0) {
                     historyLayout.addLast("main");
-                    setVisibility("institute");
+                    outputMyGroups();
                 }
-//                showLayoutInstitute();
             }
 
             @Override
@@ -252,9 +254,9 @@ public class MainActivity extends AppCompatActivity {
                 super.onSwipeUp();
                 if (historyLayout.size() > 0) {
                     historyLayout.clear();
+                    btnAddInstitute.setBackgroundResource(R.drawable.btn_add);
                     setVisibility("main");
                 }
-//                hideLayoutInstitute();
             }
         });
     }
@@ -292,15 +294,18 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    private void showAnimForFooter() {
+        int anim = R.anim.show_institute;
+        Animation animation = AnimationUtils.loadAnimation(layout_footer.getContext(), anim);
+        layout_footer.setAnimation(animation);
+    }
+
     private void outputMyGroups() {
-        if(historyLayout.isEmpty()) {
-            btnAddInstitute.setBackgroundResource(R.drawable.btn_hide_footer);
-            historyLayout.addLast("main");
-            setVisibility("my-groups");
-        } else {
-            setVisibility("main");
-            setVisibility("my-groups");
-        }
+        showAnimForFooter();
+        btnAddInstitute.setBackgroundResource(R.drawable.btn_hide_footer);
+        historyLayout.clear();
+        historyLayout.addLast("main");
+        setVisibility("my-groups");
 
         final List<MyGroup> myGroups = Database.getInstance(this).getAllGroups();
 
@@ -322,13 +327,6 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 int position = listMyGroups.indexOfChild(v);
                 Database.getInstance(getApplicationContext()).setFavoritesGroup(myGroups.get(position).getId());
-
-                if (isNetworkAvailable()) {
-                    checkUpdateSchedule();
-                } else {
-                    Toast.makeText(MainActivity.this, "Увімкніть інтернет", Toast.LENGTH_LONG).show();
-                }
-
                 outputTitleGroupName();
                 outputSchedule();
             }
@@ -343,8 +341,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void checkUpdateSchedule() {
-        btnUpdateSchedule.setVisibility(View.GONE);
-        showGifLoad(R.id.gif_load_schedule);
+        showGifLoad();
         final MyGroup group = Database.getInstance(getApplicationContext()).getFavoritesGroup();
 
         NetworkService.getInstance()
@@ -359,7 +356,7 @@ public class MainActivity extends AppCompatActivity {
                                 loadScheduleFromServer(version);
                             } else {
                                 Toast.makeText(MainActivity.this, "Встановлена остання версія розкладу", Toast.LENGTH_LONG).show();
-                                hideGifLoad(R.id.gif_load_schedule);
+                                hideGifLoad();
                                 btnUpdateSchedule.setVisibility(View.VISIBLE);
                             }
                         } else {
@@ -387,7 +384,7 @@ public class MainActivity extends AppCompatActivity {
                             Database.getInstance(getApplicationContext()).addListSchedule(schedules);
                             Database.getInstance(getApplicationContext()).setGroupVersion(group.getId(), version);
                             Toast.makeText(MainActivity.this, "Розклад обновлено", Toast.LENGTH_LONG).show();
-                            hideGifLoad(R.id.gif_load_schedule);
+                            hideGifLoad();
                             btnUpdateSchedule.setVisibility(View.VISIBLE);
                             outputSchedule();
                         } else {
@@ -612,12 +609,16 @@ public class MainActivity extends AppCompatActivity {
         adapter.setClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                int position = listMyInstitutes.indexOfChild(v);
-                String userId = String.valueOf(myInstitutesFromDb.get(position).getUserId());
-                historyLayout.addLast("institute");
-                setVisibility("divisions");
-
-                loadDivisionFromServer(userId);
+                if (isNetworkAvailable()) {
+                    int position = listMyInstitutes.indexOfChild(v);
+                    String userId = String.valueOf(myInstitutesFromDb.get(position).getUserId());
+                    historyLayout.addLast("institute");
+                    setVisibility("divisions");
+                    showGifLoad();
+                    loadDivisionFromServer(userId);
+                } else {
+                    Toast.makeText(MainActivity.this, "Увімкніть інтернет", Toast.LENGTH_LONG).show();
+                }
             }
         });
         listMyInstitutes.setAdapter(adapter);
@@ -631,6 +632,7 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onResponse(Call<List<Division>> call, Response<List<Division>> response) {
                         if (response.isSuccessful()) {
+                            hideGifLoad();
                             outputDivisions(response.body());
                         } else {
                         }
@@ -647,8 +649,12 @@ public class MainActivity extends AppCompatActivity {
         final RecyclerView listDivisions = findViewById(R.id.list_divisions);
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         listDivisions.setLayoutManager(layoutManager);
-
         final DivisionAdapter adapter = new DivisionAdapter();
+
+        if (divisions.isEmpty()) {
+            Toast.makeText(MainActivity.this, "Список порожній", Toast.LENGTH_LONG).show();
+        }
+
         adapter.setItems(divisions);
         adapter.setClickListener(new View.OnClickListener() {
             @Override
@@ -657,6 +663,7 @@ public class MainActivity extends AppCompatActivity {
                 String divisionId = String.valueOf(divisions.get(position).getId());
                 historyLayout.addLast("divisions");
                 setVisibility("semesters");
+                showGifLoad();
                 loadSemesterFromServer(divisionId);
             }
         });
@@ -671,6 +678,7 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onResponse(Call<List<Semester>> call, Response<List<Semester>> response) {
                         if (response.isSuccessful()) {
+                            hideGifLoad();
                             outputSemesters(response.body());
                         } else {
                         }
@@ -684,6 +692,10 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void outputSemesters(final List<Semester> semesters) {
+        if (semesters.isEmpty()) {
+            Toast.makeText(MainActivity.this, "Список порожній", Toast.LENGTH_LONG).show();
+        }
+
         final RecyclerView listSemesters = findViewById(R.id.list_semesters);
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
 
@@ -698,6 +710,7 @@ public class MainActivity extends AppCompatActivity {
                 String semesterId = String.valueOf(semesters.get(position).getId());
                 historyLayout.addLast("semesters");
                 setVisibility("faculties");
+                showGifLoad();
                 loadFacultyFromServer(semesterId);
 
             }
@@ -713,7 +726,9 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onResponse(Call<List<Faculty>> call, Response<List<Faculty>> response) {
                         if (response.isSuccessful()) {
+                            hideGifLoad();
                             outputFaculties(response.body());
+
                         } else {
                         }
                     }
@@ -726,6 +741,11 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void outputFaculties(final List<Faculty> faculties) {
+        if (faculties.isEmpty()) {
+            Toast.makeText(MainActivity.this, "Список порожній", Toast.LENGTH_LONG).show();
+        }
+
+
         final RecyclerView listSemesters = findViewById(R.id.list_faculties);
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
 
@@ -740,6 +760,7 @@ public class MainActivity extends AppCompatActivity {
                 String facultyId = String.valueOf(faculties.get(position).getId());
                 historyLayout.addLast("faculties");
                 setVisibility("courses");
+                showGifLoad();
                 loadCoursesFromServer(facultyId);
 
             }
@@ -755,6 +776,7 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onResponse(Call<List<Course>> call, Response<List<Course>> response) {
                         if (response.isSuccessful()) {
+                            hideGifLoad();
                             outputCourses(response.body());
                         } else {
                         }
@@ -768,6 +790,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void outputCourses(final List<Course> courses) {
+        if (courses.isEmpty()) {
+            Toast.makeText(MainActivity.this, "Список порожній", Toast.LENGTH_LONG).show();
+        }
         final RecyclerView listSemesters = findViewById(R.id.list_courses);
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
 
@@ -782,6 +807,7 @@ public class MainActivity extends AppCompatActivity {
                 String courseId = String.valueOf(courses.get(position).getId());
                 historyLayout.addLast("courses");
                 setVisibility("departments");
+                showGifLoad();
                 loadDepartmentFromServer(courseId);
 
             }
@@ -797,6 +823,7 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onResponse(Call<List<Department>> call, Response<List<Department>> response) {
                         if (response.isSuccessful()) {
+                            hideGifLoad();
                             outputDepartments(response.body());
                         } else {
                         }
@@ -810,6 +837,10 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void outputDepartments(final List<Department> departments) {
+        if (departments.isEmpty()) {
+            Toast.makeText(MainActivity.this, "Список порожній", Toast.LENGTH_LONG).show();
+        }
+
         final RecyclerView listSemesters = findViewById(R.id.list_departments);
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
 
@@ -824,6 +855,7 @@ public class MainActivity extends AppCompatActivity {
                 String departmentId = String.valueOf(departments.get(position).getId());
                 historyLayout.addLast("departments");
                 setVisibility("groups");
+                showGifLoad();
                 loadGroupsFromServer(departmentId);
 
             }
@@ -839,6 +871,7 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onResponse(Call<List<Group>> call, Response<List<Group>> response) {
                         if (response.isSuccessful()) {
+                            hideGifLoad();
                             outputGroups(response.body());
                         } else {
                         }
@@ -852,6 +885,10 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void outputGroups(final List<Group> groups) {
+        if (groups.isEmpty()) {
+            Toast.makeText(MainActivity.this, "Список порожній", Toast.LENGTH_LONG).show();
+        }
+
         final RecyclerView listGroups = findViewById(R.id.list_groups);
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
 
@@ -864,7 +901,14 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 int position = listGroups.indexOfChild(v);
                 if (saveGroup(groups.get(position))) {
+                    Database.getInstance(getApplicationContext()).setFavoritesGroup(groups.get(position).getId());
+                    if (isNetworkAvailable()) {
+                        checkUpdateSchedule();
+                    } else {
+                        Toast.makeText(MainActivity.this, "Увімкніть інтернет", Toast.LENGTH_LONG).show();
+                    }
                     outputMyGroups();
+
                     Toast.makeText(getApplicationContext(), "Група збережена", Toast.LENGTH_SHORT).show();
                 } else {
                     Toast.makeText(getApplicationContext(), "Група вже збережена", Toast.LENGTH_SHORT).show();
@@ -909,19 +953,20 @@ public class MainActivity extends AppCompatActivity {
     private void showLayoutInstitute() {
         if(historyLayout.isEmpty()) {
             btnAddInstitute.setBackgroundResource(R.drawable.btn_hide_footer);
+
+            showAnimForFooter();
+
             historyLayout.addLast("main");
             setVisibility("institute");
         } else {
             historyLayout.clear();
-            setVisibility("main");
             btnAddInstitute.setBackgroundResource(R.drawable.btn_add);
+            setVisibility("main");
         }
-//        if (layoutInstitute.getVisibility() == View.GONE) {
-//            layoutInstitute.setVisibility(View.VISIBLE);
-//            final Animation show = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.show_institute);
-//            footer.startAnimation(show);
-//        }
+
     }
+
+
 
     private void hideLayoutInstitute() {
 
@@ -947,13 +992,15 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void showGifLoad(int id) {
-        ImageView image = findViewById(id);
+    private void showGifLoad() {
+        ImageView image = findViewById(R.id.gif_load_schedule);
         image.setVisibility(View.VISIBLE);
+        btnUpdateSchedule.setVisibility(View.GONE);
     }
 
-    private void hideGifLoad(int id) {
-        ImageView image = findViewById(id);
+    private void hideGifLoad() {
+        btnUpdateSchedule.setVisibility(View.VISIBLE);
+        ImageView image = findViewById(R.id.gif_load_schedule);
         image.setVisibility(View.GONE);
     }
 

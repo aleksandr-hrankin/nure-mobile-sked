@@ -2,7 +2,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:interpolator="@android:interpolator/accelerate_cubic"
     android:startOffset="150"
-    android:fromYDelta="81.7%"
+    android:fromYDelta="50%"
     android:toYDelta="0"
     android:fillAfter="true"
     android:duration="500"/>

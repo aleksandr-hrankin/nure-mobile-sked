@@ -17,4 +17,5 @@
 
     <!--    layout-->
     <color name="all_layout">#000000</color>
+    <color name="background">#191f26</color>
 </resources>

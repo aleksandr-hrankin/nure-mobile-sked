@@ -6,6 +6,7 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
+
     <LinearLayout
         android:id="@+id/layout_head"
         android:layout_width="match_parent"
@@ -133,11 +134,6 @@
                 android:orientation="horizontal"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent">
-<!--                -->
-<!--                <include layout="@layout/layout_day"></include>-->
-<!--                <include layout="@layout/layout_day"></include>-->
-<!--                <include layout="@layout/layout_day"></include>-->
-<!--                <include layout="@layout/layout_day"></include>-->
             </LinearLayout>
         </HorizontalScrollView>
     </RelativeLayout>
@@ -217,7 +213,7 @@
                         android:layout_marginStart="30dp"
                         android:layout_marginTop="10dp"
                         android:layout_marginBottom="10dp"
-                        android:hint="Знайти інститут"/>
+                        android:hint="Назва інституту"/>
 
                     <ImageButton
                         android:id="@+id/btn_clear_search_institute"
@@ -258,7 +254,7 @@
                     android:textSize="20sp"
                     android:textColor="@color/allText"
                     android:layout_marginBottom="10dp"
-                    android:text="Мої інститути:" />
+                    android:text="Збережені інститути:" />
 
                 <TextView
                     android:id="@+id/tv_empty_list_my_institutes"
@@ -285,20 +281,16 @@
             android:layout_height="310dp"
             android:orientation="vertical"
             android:padding="10dp"
+            android:layout_marginBottom="10dp"
             android:visibility="gone">
-
-            <TextView
-                android:id="@+id/tv_title_division"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="12sp"
-                android:text="" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
+                android:layout_marginStart="6dp"
                 android:textSize="20sp"
+                android:textColor="@color/allText"
                 android:text="Розклади" />
 
             <androidx.recyclerview.widget.RecyclerView
@@ -315,20 +307,16 @@
             android:layout_height="310dp"
             android:orientation="vertical"
             android:padding="10dp"
+            android:layout_marginBottom="10dp"
             android:visibility="gone">
-
-            <TextView
-                android:id="@+id/tv_title_semester"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="12sp"
-                android:text="" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
+                android:layout_marginStart="6dp"
                 android:textSize="20sp"
+                android:textColor="@color/allText"
                 android:text="Семестри" />
 
             <androidx.recyclerview.widget.RecyclerView
@@ -345,20 +333,16 @@
             android:layout_height="310dp"
             android:orientation="vertical"
             android:padding="10dp"
+            android:layout_marginBottom="10dp"
             android:visibility="gone">
-
-            <TextView
-                android:id="@+id/tv_title_faculty"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="12sp"
-                android:text="" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
+                android:layout_marginStart="6dp"
                 android:textSize="20sp"
+                android:textColor="@color/allText"
                 android:text="Факультети" />
 
             <androidx.recyclerview.widget.RecyclerView
@@ -375,20 +359,16 @@
             android:layout_height="310dp"
             android:orientation="vertical"
             android:padding="10dp"
+            android:layout_marginBottom="10dp"
             android:visibility="gone">
-
-            <TextView
-                android:id="@+id/tv_title_course"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="12sp"
-                android:text="" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
+                android:layout_marginStart="6dp"
                 android:textSize="20sp"
+                android:textColor="@color/allText"
                 android:text="Курси" />
 
             <androidx.recyclerview.widget.RecyclerView
@@ -405,6 +385,7 @@
             android:layout_height="310dp"
             android:orientation="vertical"
             android:padding="10dp"
+            android:layout_marginBottom="10dp"
             android:visibility="gone">
 
             <TextView
@@ -418,7 +399,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
+                android:layout_marginStart="6dp"
                 android:textSize="20sp"
+                android:textColor="@color/allText"
                 android:text="Кафедри" />
 
             <androidx.recyclerview.widget.RecyclerView
@@ -435,6 +418,7 @@
             android:layout_height="310dp"
             android:orientation="vertical"
             android:padding="10dp"
+            android:layout_marginBottom="10dp"
             android:visibility="gone">
 
             <TextView
@@ -467,7 +451,6 @@
             android:padding="10dp"
             android:visibility="gone">
 
-
             <TextView
                 android:id="@+id/title_list_my_groups"
                 android:layout_width="wrap_content"
@@ -476,7 +459,7 @@
                 android:textSize="20sp"
                 android:textColor="@color/allText"
                 android:layout_marginBottom="10dp"
-                android:text="Мої групи:" />
+                android:text="Збережені групи:" />
 
             <TextView
                 android:id="@+id/tv_empty_list_my_groups"
@@ -552,15 +535,15 @@
         </LinearLayout>
 
         <TextView
-        android:id="@+id/tv_type"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textColor="@color/allText"
-        android:textSize="18sp"
-        android:layout_below="@+id/tv_info_lessonName"
-        android:layout_toEndOf="@id/layout_info_teacher"
-        android:layout_marginTop="10dp"
-        android:text="Тип:" />
+            android:id="@+id/tv_type"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/allText"
+            android:textSize="18sp"
+            android:layout_below="@+id/tv_info_lessonName"
+            android:layout_toEndOf="@id/layout_info_teacher"
+            android:layout_marginTop="10dp"
+            android:text="Тип:" />
 
         <TextView
             android:id="@+id/tv_info_lessonType"
@@ -631,5 +614,4 @@
             android:layout_marginBottom="5dp"
             android:text="12.09.2020" />
     </RelativeLayout>
-
 </RelativeLayout>

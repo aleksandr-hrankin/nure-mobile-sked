@@ -6,11 +6,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.RecyclerView.ViewHolder;
 
+import com.example.sked.MainActivity;
 import com.example.sked.R;
 import com.example.sked.database.Database;
 import com.example.sked.domain.Institute;
@@ -64,7 +66,7 @@ public class InstituteAdapter extends RecyclerView.Adapter<InstituteAdapter.Inst
     }
 
     class InstituteViewHolder extends ViewHolder {
-        //ImageButton btnInfo;
+        ImageButton btnInfo;
         //ImageButton btnTeacher;
 
         TextView instituteName;
@@ -72,7 +74,7 @@ public class InstituteAdapter extends RecyclerView.Adapter<InstituteAdapter.Inst
 
         public InstituteViewHolder(@NonNull final View itemView) {
             super(itemView);
-            //btnInfo = itemView.findViewById(R.id.btn_info_institute);
+            btnInfo = itemView.findViewById(R.id.btn_info_institute);
             //btnTeacher = itemView.findViewById(R.id.btn_teacher);
 
             instituteName = itemView.findViewById(R.id.tv_institute_name);
@@ -88,6 +90,18 @@ public class InstituteAdapter extends RecyclerView.Adapter<InstituteAdapter.Inst
 
         void bind(final Institute institute) {
             instituteName.setText(institute.getName());
+
+            btnInfo.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    String infoInstitute = " назва: " + institute.getName()
+                            + "\n сайт: " + institute.getSite()
+                            + "\n пошта: " + institute.getMail()
+                            + "\n телефон: " + institute.getPhone();
+
+                    Toast.makeText(context, infoInstitute, Toast.LENGTH_LONG).show();
+                }
+            });
 
             btnRemove.setOnClickListener(new View.OnClickListener() {
                 @Override
