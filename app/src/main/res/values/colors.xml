@@ -9,7 +9,8 @@
     <color name="practice">#df80ff</color>
     <color name="group_lesson">#99ff99</color>
     <color name="seminar">@android:color/holo_blue_light</color>
-    <color name="default_lesson_color">#ffffe6</color>
+    <color name="control_work">#ffffe6</color>
+    <color name="default_lesson_color">#ffc34d</color>
 
     <!--    text-->
     <color name="allText">#ffffff</color>

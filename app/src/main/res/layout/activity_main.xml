@@ -159,9 +159,9 @@
 
             <ImageButton
                 android:id="@+id/btn_add_institute"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                android:layout_marginStart="10dp"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_marginStart="20dp"
                 android:layout_marginTop="10dp"
                 android:layout_marginEnd="10dp"
                 android:layout_marginBottom="10dp"
@@ -184,35 +184,58 @@
             android:background="#99978050"
             android:visibility="gone">
 
-            <EditText
-                android:id="@+id/searchInstitute"
+
+            <LinearLayout
+                android:id="@+id/layout_search"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="10dp"
-                android:layout_marginTop="10dp"
-                android:layout_marginEnd="10dp"
-                android:layout_marginBottom="10dp"
-                android:ems="10"
-                android:hint="Знайти інститут"
-                android:inputType="textPersonName" />
+                android:orientation="vertical">
 
-            <ImageButton
-                android:id="@+id/btn_clear_search_institute"
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:layout_alignParentEnd="true"
-                android:layout_marginStart="10dp"
-                android:layout_marginTop="10dp"
-                android:layout_marginEnd="10dp"
-                android:layout_marginBottom="10dp"
-                android:background="@android:drawable/ic_menu_close_clear_cancel"
-                android:contentDescription="TODO" />
+                <Button
+                    android:id="@+id/btn_get_institute_from_server"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="25dp"
+                    android:layout_marginEnd="25dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginBottom="10dp"
+                    android:visibility="visible"
+                    android:text="Знайти інститут" />
+
+                <LinearLayout
+                    android:id="@+id/layout_search_institute"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:visibility="gone"
+                    android:orientation="horizontal">
+
+                    <EditText
+                        android:id="@+id/searchInstitute"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:layout_marginStart="30dp"
+                        android:layout_marginTop="10dp"
+                        android:layout_marginBottom="10dp"
+                        android:hint="Знайти інститут"/>
+
+                    <ImageButton
+                        android:id="@+id/btn_clear_search_institute"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:layout_marginTop="10dp"
+                        android:layout_marginStart="5dp"
+                        android:layout_marginEnd="10dp"
+                        android:background="@android:drawable/ic_menu_close_clear_cancel"
+                        android:contentDescription="TODO" />
+                </LinearLayout>
+            </LinearLayout>
 
             <ListView
                 android:id="@+id/listInstitutes"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/searchInstitute"
+                android:layout_below="@id/layout_search"
                 android:layout_margin="10dp"
                 android:visibility="gone" />
 
@@ -220,9 +243,10 @@
                 android:id="@+id/layout_my_institutes"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/searchInstitute"
+                android:layout_below="@+id/layout_search"
                 android:orientation="vertical"
-                android:layout_marginTop="20dp"
+                android:layout_marginStart="15dp"
+                android:layout_marginEnd="15dp"
                 android:padding="10dp"
                 android:visibility="visible">
 
@@ -230,8 +254,21 @@
                     android:id="@+id/title_list_my_institutes"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="10dp"
-                    android:text="Мої інститути" />
+                    android:layout_marginStart="6dp"
+                    android:textSize="20sp"
+                    android:textColor="@color/allText"
+                    android:layout_marginBottom="10dp"
+                    android:text="Мої інститути:" />
+
+                <TextView
+                    android:id="@+id/tv_empty_list_my_institutes"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="15sp"
+                    android:textColor="@color/allText"
+                    android:layout_marginStart="6dp"
+                    android:visibility="gone"
+                    android:text="Список порожній" />
 
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/list_my_institutes"
@@ -240,13 +277,6 @@
 
                 </androidx.recyclerview.widget.RecyclerView>
             </LinearLayout>
-
-            <pl.droidsonroids.gif.GifImageView
-                android:id="@+id/gif_load"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:src="@drawable/git_load2"
-                android:visibility="gone" />
         </RelativeLayout>
 
         <LinearLayout
@@ -437,12 +467,26 @@
             android:padding="10dp"
             android:visibility="gone">
 
+
             <TextView
                 android:id="@+id/title_list_my_groups"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="10dp"
-                android:text="Мої групи" />
+                android:layout_marginStart="6dp"
+                android:textSize="20sp"
+                android:textColor="@color/allText"
+                android:layout_marginBottom="10dp"
+                android:text="Мої групи:" />
+
+            <TextView
+                android:id="@+id/tv_empty_list_my_groups"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="15sp"
+                android:textColor="@color/allText"
+                android:layout_marginStart="6dp"
+                android:visibility="gone"
+                android:text="Список порожній" />
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/list_my_groups"
@@ -459,7 +503,7 @@
         android:layout_width="match_parent"
         android:layout_height="170dp"
         android:layout_alignParentBottom="true"
-        android:visibility="visible">
+        android:visibility="gone">
 
         <pl.droidsonroids.gif.GifImageView
             android:id="@+id/gif_lesson"
